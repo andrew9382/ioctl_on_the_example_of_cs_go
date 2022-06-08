@@ -1,0 +1,77 @@
+;
+; ioctl_on_the_example_of_cs_go.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System ; TODO: specify appropriate Class
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=ioctl_on_the_example_of_cs_go.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+ioctl_on_the_example_of_cs_go_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+ioctl_on_the_example_of_cs_go.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ioctl_on_the_example_of_cs_go.DeviceDesc%=ioctl_on_the_example_of_cs_go_Device, Root\ioctl_on_the_example_of_cs_go ; TODO: edit hw-id
+
+[ioctl_on_the_example_of_cs_go_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+ioctl_on_the_example_of_cs_go.sys
+
+;-------------- Service installation
+[ioctl_on_the_example_of_cs_go_Device.NT.Services]
+AddService = ioctl_on_the_example_of_cs_go,%SPSVCINST_ASSOCSERVICE%, ioctl_on_the_example_of_cs_go_Service_Inst
+
+; -------------- ioctl_on_the_example_of_cs_go driver install sections
+[ioctl_on_the_example_of_cs_go_Service_Inst]
+DisplayName    = %ioctl_on_the_example_of_cs_go.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\ioctl_on_the_example_of_cs_go.sys
+
+;
+;--- ioctl_on_the_example_of_cs_go_Device Coinstaller installation ------
+;
+
+[ioctl_on_the_example_of_cs_go_Device.NT.CoInstallers]
+AddReg=ioctl_on_the_example_of_cs_go_Device_CoInstaller_AddReg
+CopyFiles=ioctl_on_the_example_of_cs_go_Device_CoInstaller_CopyFiles
+
+[ioctl_on_the_example_of_cs_go_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ioctl_on_the_example_of_cs_go_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[ioctl_on_the_example_of_cs_go_Device.NT.Wdf]
+KmdfService =  ioctl_on_the_example_of_cs_go, ioctl_on_the_example_of_cs_go_wdfsect
+[ioctl_on_the_example_of_cs_go_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "ioctl_on_the_example_of_cs_go Installation Disk"
+ioctl_on_the_example_of_cs_go.DeviceDesc = "ioctl_on_the_example_of_cs_go Device"
+ioctl_on_the_example_of_cs_go.SVCDESC = "ioctl_on_the_example_of_cs_go Service"
