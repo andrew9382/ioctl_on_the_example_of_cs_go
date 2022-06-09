@@ -39,11 +39,9 @@ NTSTATUS IoControl(DEVICE_OBJECT* p_device_object, IRP* p_irp)
         
         PEPROCESS process;
 
-        NTSTATUS test_st;
-
-        if (NT_SUCCESS(test_st = PsLookupProcessByProcessId((HANDLE)p_output_buffer->process_id, &process)))
+        if (NT_SUCCESS(PsLookupProcessByProcessId((HANDLE)p_output_buffer->process_id, &process)))
         {
-            if (NT_SUCCESS(test_st = KernelReadVirtualMemory(process, p_output_buffer->address, p_output_buffer->p_buffer, p_output_buffer->size)))
+            if (NT_SUCCESS(KernelReadVirtualMemory(process, p_output_buffer->address, p_output_buffer->p_buffer, p_output_buffer->size)))
             {
                 status = STATUS_SUCCESS;
                 bytes_io = sizeof(KERNEL_READ_VIRTUAL_MEMORY);
