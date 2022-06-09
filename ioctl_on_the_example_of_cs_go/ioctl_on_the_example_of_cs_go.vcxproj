@@ -131,12 +131,14 @@
     <ClInclude Include="includes.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="memory.h" />
+    <ClInclude Include="ob_register_callback.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="communication.c" />
     <ClCompile Include="events.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="memory.c" />
+    <ClCompile Include="ob_register_callback.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
