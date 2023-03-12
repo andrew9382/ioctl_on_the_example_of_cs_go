@@ -3,10 +3,12 @@
 OB_PREOP_CALLBACK_STATUS ObRegisterCallback(PVOID registration_context, POB_PRE_OPERATION_INFORMATION operation_info)
 {
     UNREFERENCED_PARAMETER(registration_context);
-
+    
     PEPROCESS opened_process = (PEPROCESS)operation_info->Object;
-
+    
     ULONG opened_process_id = PsGetProcessId(opened_process);
+
+    ULONG src_process_id = PsGetCurrentProcessId();
 
     if (controller_process_id)
     {
@@ -16,18 +18,18 @@ OB_PREOP_CALLBACK_STATUS ObRegisterCallback(PVOID registration_context, POB_PRE_
             {
                 return OB_PREOP_SUCCESS;
             }
-
+            
             if (operation_info->Operation == OB_OPERATION_HANDLE_CREATE)
             {
                 if (operation_info->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_QUERY_LIMITED_INFORMATION)
                 {
-                    DebugMsg("ObRegisterCallback: handle stripped from PROCESS_QUERY_LIMITED_INFORMATION rights!\n");
+                    DebugMsg("ObRegisterCallback: handle stripped from PROCESS_QUERY_LIMITED_INFORMATION rights! PID of src process = %d\n", src_process_id);
 
                     operation_info->Parameters->CreateHandleInformation.DesiredAccess ^= PROCESS_QUERY_LIMITED_INFORMATION;
                 }
                 else if (operation_info->Parameters->CreateHandleInformation.OriginalDesiredAccess & PROCESS_VM_READ)
                 {
-                    DebugMsg("ObRegisterCallback: handle stripped from PROCESS_VM_READ rights!\n");
+                    //DebugMsg("ObRegisterCallback: handle stripped from PROCESS_VM_READ rights!\n");
                     
                     operation_info->Parameters->CreateHandleInformation.DesiredAccess ^= PROCESS_VM_READ;
                 }
@@ -36,13 +38,13 @@ OB_PREOP_CALLBACK_STATUS ObRegisterCallback(PVOID registration_context, POB_PRE_
             {
                 if (operation_info->Parameters->DuplicateHandleInformation.OriginalDesiredAccess & PROCESS_QUERY_LIMITED_INFORMATION)
                 {
-                    DebugMsg("ObRegisterCallback: handle stripped from PROCESS_QUERY_LIMITED_INFORMATION rights!\n");
+                    //DebugMsg("ObRegisterCallback: handle stripped from PROCESS_QUERY_LIMITED_INFORMATION rights!\n");
                     
                     operation_info->Parameters->DuplicateHandleInformation.DesiredAccess ^= PROCESS_QUERY_LIMITED_INFORMATION;
                 }
                 else if (operation_info->Parameters->DuplicateHandleInformation.OriginalDesiredAccess & PROCESS_VM_READ)
                 {
-                    DebugMsg("ObRegisterCallback: handle stripped from PROCESS_VM_READ rights!\n");
+                    //DebugMsg("ObRegisterCallback: handle stripped from PROCESS_VM_READ rights!\n");
                     
                     operation_info->Parameters->DuplicateHandleInformation.DesiredAccess ^= PROCESS_VM_READ;
                 }
@@ -66,7 +68,7 @@ NTSTATUS RegisterObCallback()
     callback_reg.Version = ObGetFilterVersion();
     callback_reg.OperationRegistration = &operation_reg;
     callback_reg.OperationRegistrationCount = 1;
-
+    
     operation_reg.ObjectType = PsProcessType;
     operation_reg.Operations = OB_OPERATION_HANDLE_CREATE | OB_OPERATION_HANDLE_DUPLICATE;
     operation_reg.PreOperation = ObRegisterCallback;

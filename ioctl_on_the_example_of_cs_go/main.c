@@ -11,9 +11,9 @@ NTSTATUS DriverEntry(DRIVER_OBJECT* p_driver_object, UNICODE_STRING* p_registry_
 
 	p_driver_object->DriverUnload = UnloadDriver;
 
-	p_driver_object->MajorFunction[IRP_MJ_CREATE] = CreateCall;
-	p_driver_object->MajorFunction[IRP_MJ_CLOSE] = CloseCall;
-	p_driver_object->MajorFunction[IRP_MJ_DEVICE_CONTROL] = IoControl;
+	p_driver_object->MajorFunction[IRP_MJ_CREATE]			= CreateCall;
+	p_driver_object->MajorFunction[IRP_MJ_CLOSE]			= CloseCall;
+	p_driver_object->MajorFunction[IRP_MJ_DEVICE_CONTROL]	= IoControl;
 
 	status = PsSetLoadImageNotifyRoutine(ImageLoadCallback);
 
